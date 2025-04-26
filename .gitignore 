@@ -1,38 +1,19 @@
-# Ignore virtual environment
 .myenv/
 myenv/
-
-# Ignore Python cache
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-
-# Ignore environment variable files
 .env
 .env.*
-
-# Ignore Streamlit specific files
 .streamlit/config.toml
-
-# Ignore database dumps or backups (if any)
 *.sqlite3
 *.db
 *.sql
-
-# Ignore Jupyter notebooks checkpoint
 .ipynb_checkpoints/
-
-# Ignore OS-specific files
 .DS_Store
 Thumbs.db
-
-# Ignore logs (optional)
 *.log
-
-# Ignore IDE files
 .idea/
 .vscode/
-
-# Ignore Pip cache
 pip-wheel-metadata/
