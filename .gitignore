@@ -9,7 +9,7 @@ __pycache__/
 .streamlit/config.toml
 *.sqlite3
 *.db
-*.sql
+
 .ipynb_checkpoints/
 .DS_Store
 Thumbs.db
