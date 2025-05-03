@@ -8,7 +8,7 @@ def register(conn):
     st.header("Register")
 
     with st.form("register_form"):
-        email = st.text_input("Email")
+        email = st.text_input("Username")
         first_name = st.text_input("First Name")
         last_name = st.text_input("Last Name")
         password = st.text_input("Password", type="password")
@@ -20,12 +20,6 @@ def register(conn):
             # Check all fields filled
             if not (email and first_name and last_name and password and confirm_password):
                 st.warning("❗ Please fill in all fields.")
-                return
-
-            # Check email format
-            pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
-            if not re.match(pattern, email):
-                st.error("❌ Invalid email format. Please enter a valid email (example@gmail.com).")
                 return
 
             # Check password match
@@ -40,7 +34,7 @@ def register(conn):
             try:
                 result = conn.query("SELECT * FROM users WHERE email = :email", params={"email": email}, ttl =0)
                 if not result.empty:
-                    st.warning("❗ Email already exists.")
+                    st.warning("❗ Username already exists.")
                     return
                 else:
                     # Insert new user
