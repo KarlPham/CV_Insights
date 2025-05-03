@@ -1,7 +1,7 @@
-streamlit
-sqlalchemy
-psycopg2-binary
-python-dotenv
-google-generativeai
-pandas
-authlib
+streamlit==1.45.0
+sqlalchemy==2.0.40
+psycopg2-binary==2.9.10
+python-dotenv==1.1.0
+google-generativeai==0.8.5
+pandas==2.2.3
+authlib==1.5.2
