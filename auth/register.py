@@ -2,7 +2,6 @@ import streamlit as st
 from sqlalchemy import text
 import hashlib
 from datetime import datetime
-import re
 
 def register(conn):
     st.header("Register")

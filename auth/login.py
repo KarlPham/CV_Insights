@@ -19,11 +19,11 @@ def login(conn):
         with col1:
             google_login = st.form_submit_button(" Continue with Google")
 
-        with col2:
-            microsoft_login = st.form_submit_button("🪟 Continue with Microsoft")
+        # with col2:
+        #     microsoft_login = st.form_submit_button("🪟 Continue with Microsoft")
 
         # Main login button
-        login_submit = st.form_submit_button("🔑 Login")
+        login_submit = st.form_submit_button("Login")
 
         # ---------------------------------------
         # Email/Password login logic
@@ -40,6 +40,7 @@ def login(conn):
                         st.success("✅ Login successful!")
                         st.session_state["logged_in"] = True
                         st.session_state["user_email"] = email
+                        st.rerun()
 
                     else:
                         st.error("❌ Invalid email or password.")
@@ -56,12 +57,12 @@ def login(conn):
                 st.login()
         # ---------------------------------------
         # Microsoft login logic (optional)
-        if microsoft_login:
-            st.info("⚡ Microsoft login is not implemented yet.")
+        # if microsoft_login:
+        #     st.info("⚡ Microsoft login is not implemented yet.")
 
     if st.user.is_logged_in:
         google_email = st.user.email
-        password = "123"  # Dummy password
+        password = "123"
         given_name = st.user.given_name or ""
         family_name = st.user.family_name or ""
 
@@ -89,11 +90,6 @@ def login(conn):
 
         st.session_state["logged_in"] = True
         st.session_state["user_email"] = google_email
+        st.rerun()
 
-    if st.session_state.get("logged_in") :
-        st.write("Hello")
-        if st.button("Log out", type="secondary", icon=":material/logout:"):
-            st.session_state["logged_in"] = False
-            if st.user.is_logged_in:
-                st.logout()
-            st.rerun()
+
