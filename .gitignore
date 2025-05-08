@@ -18,3 +18,5 @@ Thumbs.db
 pip-wheel-metadata/
 .streamlit/
 .venv/
+uploaded_files/resume/
+uploaded_files/jobdesc/
