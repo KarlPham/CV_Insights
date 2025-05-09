@@ -24,6 +24,9 @@ def read_docx(file_path):
 def upload_job_description(conn):
     st.subheader("📝 Upload Job Description")
 
+    # if "jobdesc_uploaded" not in st.session_state:
+    #     st.session_state["jobdesc_uploaded"] = False
+
     user_email = st.session_state.get("user_email")
     result = conn.query("SELECT user_id FROM users WHERE email = :email", params={"email": user_email}, ttl=0)
 
@@ -62,8 +65,7 @@ def upload_job_description(conn):
 
         # Save jd_text to session_state
         st.session_state["jd_text"] = jd_text
-
+        st.session_state["jobdesc_uploaded"] = True
         st.success("✅ Job Description uploaded and saved!")
-        return True
 
-    return False
+

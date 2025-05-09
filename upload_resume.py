@@ -23,6 +23,8 @@ def read_docx(file_path):
 
 def upload_resume(conn):
     st.subheader("📄 Upload Resume")
+    # if "resume_uploaded" not in st.session_state:
+    #     st.session_state["resume_uploaded"] = False
 
     user_email = st.session_state.get("user_email")
     result = conn.query("SELECT user_id FROM users WHERE email = :email", params={"email": user_email}, ttl=0)
@@ -62,8 +64,7 @@ def upload_resume(conn):
 
         # Save resume_text to session_state
         st.session_state["resume_text"] = resume_text
-
+        st.session_state["resume_uploaded"] = True
         st.success("✅ Resume uploaded and saved!")
-        return True
 
-    return False
+

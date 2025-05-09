@@ -13,28 +13,11 @@ def home(conn):
     if "jobdesc_uploaded" not in st.session_state:
         st.session_state["jobdesc_uploaded"] = False
 
-    # Already uploaded case
+    upload_resume(conn)
+    upload_job_description(conn)
+
     if st.session_state["resume_uploaded"] and st.session_state["jobdesc_uploaded"]:
         st.success("✅ All files uploaded successfully!")
-        # st.write(st.session_state["resume_text"])
-        # st.divider()
-        # st.write(st.session_state["jd_text"])
-
-        if st.button("🚀 Go to Results Page"):
-            st.session_state["page"] = "Result"
-            st.rerun()
-
-    # Upload resume
-    if not st.session_state["resume_uploaded"]:
-        if upload_resume(conn):
-            st.session_state["resume_uploaded"] = True
-            st.rerun()
-
-    # Upload job description
-    if not st.session_state["jobdesc_uploaded"]:
-        if upload_job_description(conn):
-            st.session_state["jobdesc_uploaded"] = True
-            st.rerun()
 
     # Logout
     if st.button("Logout"):
