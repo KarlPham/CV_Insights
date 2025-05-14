@@ -17,7 +17,7 @@ def home(conn):
     upload_job_description(conn)
 
     if st.session_state["resume_uploaded"] and st.session_state["jobdesc_uploaded"]:
-        st.success("✅ All files uploaded successfully!")
+        st.success(" All files uploaded successfully!")
 
     # Logout
     if st.button("Logout"):

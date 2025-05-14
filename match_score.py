@@ -1,67 +1,116 @@
+from google import genai
+from pydantic import BaseModel
 import streamlit as st
-import google.generativeai as genai
+from sqlalchemy import text
+from datetime import datetime
 
-# Configure Gemini using secrets
-genai.configure(api_key=st.secrets["google"]["api_key"])
+# 1. Define schema
+class MatchCriteria(BaseModel):
+    Technical_Skills_Match: int
+    Soft_Skills_Communication: int
+    Relevant_Work_Experience: int
+    Education_Certifications: int
+    Resume_Formatting_Clarity: int
+    Overall_Fit_for_Role: int
 
+class MatchScoreOutput(BaseModel):
+    match_score: int
+    criteria: MatchCriteria
+    did_well: list[str]
+    not_well: list[str]
+    need_improve: list[str]
 
-def get_match_score(resume_text, jd_text):
-    """
-    Analyze resume and job description to generate match score and review.
-    """
+# 2. Configure Gemini client
+client = genai.Client(api_key=st.secrets["google"]["api_key"])
 
+# 3. Gemini structured call
+def get_match_score(conn, resume_text, jd_text):
     prompt = f"""
-You are a professional ATS system and recruiter AI assistant, responsible for evaluating student resumes against job descriptions for internship and graduate IT roles.
-Given the following resume and job description, perform the following analysis:
+You are an AI resume evaluator. Analyze the resume and job description below.
+
+Your task is to evaluate and return a structured JSON object in the following format:
+{{
+  "match_score": <int 0-100>,
+  "criteria": {{
+    "Technical_Skills_Match": <0-25>,
+    "Soft_Skills_Communication": <0-20>,
+    "Relevant_Work_Experience": <0-25>,
+    "Education_Certifications": <0-10>,
+    "Resume_Formatting_Clarity": <0-10>,
+    "Overall_Fit_for_Role": <0-10>
+  }},
+  "did_well": [...],
+  "not_well": [...],
+  "need_improve": [...]
+}}
 
 Resume:
 {resume_text}
 
 Job Description:
 {jd_text}
-
-Your evaluation should be STRICTLY STRUCTURED in the following format and should not include unnecessary text or explanations. The output must be always in this JSON format.
-
-
-  "total_score": X,
-  "criteria_scores": 
-    "technical_skills": X,
-    "soft_skills": X,
-    "work_experience": X,
-    "education_certifications": X,
-    "formatting_clarity": X,
-    "overall_fit": X
-  ,
-  "did_well": "What the candidate did well",
-  "not_well": "What was weak or missing",
-  "need_improvement": "Suggestions for improvement"
-
-Where:
-
-- total_score: Calculate out of 100 (sum of all criteria scores).
-- technical_skills: Score out of 25 based on relevance and presence of technical skills.
-- soft_skills: Score out of 20 based on communication, teamwork, adaptability shown in the resume.
-- work_experience: Score out of 20 based on relevance and quality of past projects/work.
-- education_certifications: Score out of 15 based on relevant degrees/certifications.
-- formatting_clarity: Score out of 10 based on clarity and readability of the resume.
-- overall_fit: Score out of 10 based on the general impression and alignment with the job.
-
-Rules:
-
-- Be very strict and fair while scoring.
-- Always give constructive feedback for "did_well", "not_well", and "need_improvement".
-- NEVER return free text. Return ONLY JSON.
-- Be clear, consistent because it very important.
-
 """
+    # gemini - 2.5 - pro - exp - 03 - 25
+    response = client.models.generate_content(
+        model="gemini-2.5-flash-preview-04-17",
+        contents=prompt,
+        config={
+            "response_mime_type": "application/json",
+            "response_schema": MatchScoreOutput,
+            "temperature": 0.0,
+            "top_p": 1.0,
+        }
+    )
 
-    # Load Gemini model
-    model = genai.GenerativeModel('gemini-2.5-pro-exp-03-25')
+    # 4. Save to session
+    st.session_state["match_score_result"] = response.parsed
 
-    # Generate the response
-    response = model.generate_content(prompt,generation_config=genai.types.GenerationConfig(
-        temperature=0.0,
-        top_p = 1
-    ))
+    user_email = st.session_state.get("user_email")
+    user_id_result = conn.query("SELECT user_id FROM users WHERE email = :email", params={"email": user_email}, ttl=0)
+    if user_id_result.empty:
+        st.error("User not found in DB.")
+        return response.parsed
 
-    return response.text
+    user_id = int(user_id_result.iloc[0]["user_id"])
+
+    resume_id_result = conn.query(
+        "SELECT resume_id FROM resume WHERE user_id = :user_id ORDER BY upload_date DESC LIMIT 1",
+        params={"user_id": user_id}, ttl=0)
+    jobdesc_id_result = conn.query(
+        "SELECT job_desc_id FROM job_description WHERE user_id = :user_id ORDER BY upload_date DESC LIMIT 1",
+        params={"user_id": user_id}, ttl=0)
+
+    if resume_id_result.empty or jobdesc_id_result.empty:
+        st.error("Resume or Job Description not found in DB.")
+        return response.parsed
+
+    resume_id = int(resume_id_result.iloc[0]["resume_id"])
+    jd_id = int(jobdesc_id_result.iloc[0]["job_desc_id"])
+
+    # Save result to DB
+    with conn.session as session:
+        session.execute(
+            text("""
+                    INSERT INTO match_scores (
+                        user_id, resume_id, job_desc_id, match_score,
+                        did_well, not_well, need_focus, create_at
+                    )
+                    VALUES (
+                        :user_id, :resume_id, :jd_id, :match_score,
+                        :did_well, :not_well, :need_improve, :analyze_date
+                    )
+                """),
+            {
+                "user_id": user_id,
+                "resume_id": resume_id,
+                "jd_id": jd_id,
+                "match_score": response.parsed.match_score,
+                "did_well": "\n".join(response.parsed.did_well),
+                "not_well": "\n".join(response.parsed.not_well),
+                "need_improve": "\n".join(response.parsed.need_improve),
+                "analyze_date": datetime.now()
+            }
+        )
+        session.commit()
+
+    return response.parsed

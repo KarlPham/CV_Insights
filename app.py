@@ -36,7 +36,7 @@ if st.session_state.get("logged_in"):
 
     # Result page
     elif st.session_state["page"] == "Result":
-        show_result()
+        show_result(conn)
 
 else:
     # Sidebar for login/register

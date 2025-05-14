@@ -22,7 +22,7 @@ def read_docx(file_path):
     return "\n".join(fullText)
 
 def upload_resume(conn):
-    st.subheader("📄 Upload Resume")
+    st.subheader(" Upload Resume")
     # if "resume_uploaded" not in st.session_state:
     #     st.session_state["resume_uploaded"] = False
 
