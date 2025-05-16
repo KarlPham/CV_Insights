@@ -3,6 +3,7 @@ from pydantic import BaseModel
 import streamlit as st
 from sqlalchemy import text
 from datetime import datetime
+from skills_suggestion import save_skill_suggestions
 
 # 1. Define schema
 class MatchCriteria(BaseModel):
@@ -89,17 +90,18 @@ Job Description:
 
     # Save result to DB
     with conn.session as session:
-        session.execute(
+        result = session.execute(
             text("""
-                    INSERT INTO match_scores (
-                        user_id, resume_id, job_desc_id, match_score,
-                        did_well, not_well, need_focus, create_at
-                    )
-                    VALUES (
-                        :user_id, :resume_id, :jd_id, :match_score,
-                        :did_well, :not_well, :need_improve, :analyze_date
-                    )
-                """),
+                INSERT INTO match_scores (
+                    user_id, resume_id, job_desc_id, match_score,
+                    did_well, not_well, need_focus, create_at
+                )
+                VALUES (
+                    :user_id, :resume_id, :jd_id, :match_score,
+                    :did_well, :not_well, :need_improve, :analyze_date
+                )
+                RETURNING match_id
+            """),
             {
                 "user_id": user_id,
                 "resume_id": resume_id,
@@ -111,6 +113,13 @@ Job Description:
                 "analyze_date": datetime.now()
             }
         )
+
+        # ✅ Fetch BEFORE committing
+        match_id_row = result.fetchone()
+        match_id = match_id_row[0] if match_id_row else None
         session.commit()
+        st.session_state["match_id"] = match_id
+        if "skills_suggestions" in st.session_state and "match_id" in st.session_state:
+            save_skill_suggestions(conn, st.session_state["match_id"], st.session_state["skills_suggestions"])
 
     return response.parsed
