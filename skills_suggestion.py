@@ -12,26 +12,27 @@ class SkillSuggestionsOutput(BaseModel):
 client = genai.Client(api_key=st.secrets["google"]["api_key"])
 
 def get_skill_suggestions(conn, resume_text, jd_text):
-        prompt = f"""
-    You are an AI assistant helping users improve their resumes.
+        prompt = f"""    
+    You are an expert career advisor and IT recruiter evaluating student resumes for job readiness.
 
-    Based on the resume and the job description below, return skill suggestions in **three categories**: 
-    - technical skills
-    - soft skills
-    - relevant work experience
+Your task is to analyze the resume against the job description and identify **gaps or weak areas** that reduce the candidate's match for the role. Focus on three categories:
+- **Technical Skills** – tools, languages, frameworks, or platforms that are missing or not well-demonstrated.
+- **Soft Skills** – interpersonal or professional qualities that are lacking or unclear.
+- **Work Experience in Australia** – mention if local experience, internships, or projects are missing or weak.
 
-    Format the output as JSON exactly like this:
-    {{
-      "tech_skills": ["skill1", "skill2"],
-      "soft_skills": ["skill3", "skill4"],
-      "work_exp": ["experience1", "experience2"]
-    }}
+Return the result as a structured JSON object **exactly** in this format:
+  "tech_skills": ["skill1", "skill2"],
+  "soft_skills": ["skill3", "skill4"],
+  "work_exp": ["experience1", "experience2"]
 
-    Resume:
-    {resume_text}
 
-    Job Description:
-    {jd_text}
+Keep suggestions specific and concise. Only include items that are clearly missing or underrepresented.
+
+Resume:
+{resume_text}
+
+Job Description:
+{jd_text}
     """
         response = client.models.generate_content(
             model="gemini-2.5-flash-preview-04-17",
