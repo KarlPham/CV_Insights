@@ -25,8 +25,9 @@ Return the result as a structured JSON object **exactly** in this format:
   "soft_skills": ["skill3", "skill4"],
   "work_exp": ["experience1", "experience2"]
 
+Do NOT describe what the resume already contains.
 
-Keep suggestions specific and concise. Only include items that are clearly missing or underrepresented.
+Instead, focus ONLY on **missing or underrepresented items** based on the job description expectations.
 
 Resume:
 {resume_text}
