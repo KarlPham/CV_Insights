@@ -3,6 +3,7 @@ from auth.login import login
 from auth.register import register
 from home import home
 from result import show_result
+from user_profile import show_user_profile 
 
 # Connect to DB
 conn = st.connection("postgres")
@@ -25,7 +26,7 @@ if st.session_state.get("logged_in"):
 
     # Sidebar navigation for Home
     st.sidebar.title("CV Insights")
-    page = st.sidebar.radio("Select Page", ["Upload", "Result"])
+    page = st.sidebar.radio("Select Page", ["Upload", "Result", "User Profile"])
 
     if page != st.session_state["page"]:
         st.session_state["page"] = page
@@ -37,6 +38,10 @@ if st.session_state.get("logged_in"):
     # Result page
     elif st.session_state["page"] == "Result":
         show_result(conn)
+    
+    elif st.session_state["page"] == "User Profile": # ✅ Add this inside the block
+        show_user_profile(conn)  # ✅ Correct function
+
 
 else:
     # Sidebar for login/register
