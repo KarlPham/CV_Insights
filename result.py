@@ -3,6 +3,7 @@ from match_score import get_match_score
 import pandas as pd
 import matplotlib.pyplot as plt
 from skills_suggestion import get_skill_suggestions
+from question_generator import generate_and_save_interview_questions
 
 def show_result(conn):
     st.title(" CV_insights result")
@@ -112,6 +113,41 @@ def show_result(conn):
                         f"<div style='background-color:#e6ffee;padding:8px;border-radius:8px;margin-bottom:6px;color:black;'> {exp}</div>",
                         unsafe_allow_html=True)
 
-    with tab3:
-        st.subheader("AI-Generated Interview Questions")
-        st.info("🚧 Coming soon: This section will provide tailored interview questions based on your resume and job description.")
+        with tab3:
+            st.subheader("🗣️ AI-Generated Interview Questions")
+
+        # Ensure match_id is available
+            if "match_id" not in st.session_state:
+                st.warning("❗ Please analyze your resume first to generate interview questions.")
+                return
+
+            if "interview_questions" not in st.session_state:
+                if st.button("Generate Interview Questions"):
+                    with st.spinner("Generating interview questions..."):
+                        try:
+                            result_obj = generate_and_save_interview_questions(
+                                conn,
+                                st.session_state["resume_text"],
+                                st.session_state["jd_text"],
+                                st.session_state["match_id"]
+                            )
+                            st.session_state["interview_questions"] = result_obj
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"❌ Failed to generate questions: {e}")
+            else:
+                questions = st.session_state["interview_questions"]
+
+                if questions.tech_questions:
+                    st.subheader("💻 Technical Questions")
+                    for q in questions.tech_questions:
+                        st.markdown(f"- {q}")
+                else:
+                    st.info("No technical questions generated.")
+
+                if questions.behav_questions:
+                    st.subheader("🧠 Behavioral Questions")
+                    for q in questions.behav_questions:
+                        st.markdown(f"- {q}")
+                else:
+                    st.info("No behavioral questions generated.")
