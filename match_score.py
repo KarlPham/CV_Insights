@@ -24,8 +24,9 @@ class MatchScoreOutput(BaseModel):
 # 2. Configure Gemini client
 client = genai.Client(api_key=st.secrets["google"]["api_key"])
 
-# 3. Gemini structured call
 def get_match_score(conn, resume_text, jd_text):
+    if not resume_text.strip() or not jd_text.strip():
+        return None
     prompt = f"""
 You are an AI resume evaluator. Analyze the resume and job description below.
 
@@ -123,3 +124,4 @@ Job Description:
             save_skill_suggestions(conn, st.session_state["match_id"], st.session_state["skills_suggestions"])
 
     return response.parsed
+

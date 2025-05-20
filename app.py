@@ -3,53 +3,46 @@ from auth.login import login
 from auth.register import register
 from home import home
 from result import show_result
-from user_profile import show_user_profile 
+from user_profile import show_user_profile
 
 # Connect to DB
 conn = st.connection("postgres")
 
 # Initialize session state
-if "logged_in" not in st.session_state:
-    st.session_state["logged_in"] = False
+st.session_state.setdefault("logged_in", False)
+st.session_state.setdefault("resume_uploaded", False)
+st.session_state.setdefault("jobdesc_uploaded", False)
+st.session_state.setdefault("page", "Upload")
 
-if "resume_uploaded" not in st.session_state:
-    st.session_state["resume_uploaded"] = False
+# Logged-in user view
+if st.session_state["logged_in"]:
+    # Define page options
+    PAGES = ["Upload", "Result", "User Profile"]
 
-if "jobdesc_uploaded" not in st.session_state:
-    st.session_state["jobdesc_uploaded"] = False
-
-if "page" not in st.session_state:
-    st.session_state["page"] = "Upload"
-
-# If user is logged in, show Home or Result
-if st.session_state.get("logged_in"):
-
-    # Sidebar navigation for Home
+    # Show sidebar
     st.sidebar.title("CV Insights")
-    page = st.sidebar.radio("Select Page", ["Upload", "Result", "User Profile"])
+    selected_page = st.sidebar.radio("Select Page", PAGES, index=PAGES.index(st.session_state["page"]))
 
-    if page != st.session_state["page"]:
-        st.session_state["page"] = page
+    # ✅ Only update if changed (prevents unnecessary rerun loop)
+    if selected_page != st.session_state["page"]:
+        st.session_state["page"] = selected_page
+        st.rerun()  # Ensure proper rendering on selection
 
-    # Upload page
-    if st.session_state["page"] == "Upload":
+    # Page Routing
+    if selected_page == "Upload":
         home(conn)
-
-    # Result page
-    elif st.session_state["page"] == "Result":
+    elif selected_page == "Result":
         show_result(conn)
-    
-    elif st.session_state["page"] == "User Profile": # ✅ Add this inside the block
-        show_user_profile(conn)  # ✅ Correct function
+    elif selected_page == "User Profile":
+        show_user_profile(conn)
 
 
+# Guest view: Login/Register
 else:
-    # Sidebar for login/register
     st.sidebar.title("CV Insights")
-    page = st.sidebar.radio("Select Page", ["Login", "Register"])
+    auth_page = st.sidebar.radio("Select Page", ["Login", "Register"])
 
-    if page == "Login":
+    if auth_page == "Login":
         login(conn)
-
-    elif page == "Register":
+    elif auth_page == "Register":
         register(conn)

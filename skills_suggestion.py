@@ -12,8 +12,10 @@ class SkillSuggestionsOutput(BaseModel):
 client = genai.Client(api_key=st.secrets["google"]["api_key"])
 
 def get_skill_suggestions(conn, resume_text, jd_text):
+        if not resume_text.strip() or not jd_text.strip():
+            return None
         prompt = f"""    
-    You are an expert career advisor and IT recruiter evaluating student resumes for job readiness.
+You are an expert career advisor and IT recruiter evaluating student resumes for job readiness.
 
 Your task is to analyze the resume against the job description and identify **gaps or weak areas** that reduce the candidate's match for the role. Focus on three categories:
 - **Technical Skills** – tools, languages, frameworks, or platforms that are missing or not well-demonstrated.

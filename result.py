@@ -28,7 +28,12 @@ def show_result(conn):
                         st.session_state["resume_text"],
                         st.session_state["jd_text"]
                     )
-                st.rerun()
+                    if result_obj is None:
+
+                        st.warning("Resume and Job Description are empty. Please reupload them.")
+
+                    else:
+                        st.rerun()
         else:
             result = st.session_state["match_score_result"]
 
@@ -76,14 +81,19 @@ def show_result(conn):
         st.subheader("Suggestions Skills")
 
         if "skills_suggestions" not in st.session_state:
-            if st.button("Create Skill Suggestions", type= "primary"):
+            if st.button("Generate Skill Suggestions", type= "primary"):
                 with st.spinner("Analyzing skills suggestions for your resume and job description..."):
                     result_obj = get_skill_suggestions(
                         conn,
                         st.session_state["resume_text"],
                         st.session_state["jd_text"]
                     )
-                st.rerun()
+                if result_obj is None:
+
+                    st.warning("Resume and Job Description are empty. Please reupload them.")
+
+                else:
+                    st.rerun()
         else:
             result = st.session_state["skills_suggestions"]
 
