@@ -66,6 +66,6 @@ def upload_job_description(conn):
         # Save jd_text to session_state
         st.session_state["jd_text"] = jd_text
         st.session_state["jobdesc_uploaded"] = True
-        st.success("✅ Job Description uploaded and saved!")
+        st.badge("Success", icon=":material/check:", color="green")
 
 

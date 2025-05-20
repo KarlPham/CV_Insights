@@ -12,7 +12,7 @@ def register(conn):
         last_name = st.text_input("Last Name")
         password = st.text_input("Password", type="password")
         confirm_password = st.text_input("Confirm Password", type="password")
-        register_submit = st.form_submit_button("Register")
+        register_submit = st.form_submit_button("Register", type="primary")
 
         if register_submit:
 
@@ -52,6 +52,6 @@ def register(conn):
                             }
                         )
                         session.commit()
-                    st.success("✅ Registration successful!")
+                    st.badge("Success", icon=":material/check:", color="green")
             except Exception as e:
                 st.error(f"❌ Error: {e}")

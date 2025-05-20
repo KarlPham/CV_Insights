@@ -17,13 +17,13 @@ def login(conn):
         col1, col2 = st.columns(2)
 
         with col1:
-            google_login = st.form_submit_button(" Continue with Google")
+            google_login = st.form_submit_button(" Continue with Google", icon=":material/g_mobiledata:")
 
         # with col2:
         #     microsoft_login = st.form_submit_button("🪟 Continue with Microsoft")
 
         # Main login button
-        login_submit = st.form_submit_button("Login")
+        login_submit = st.form_submit_button("Login",type="primary")
 
         # ---------------------------------------
         # Email/Password login logic
@@ -55,10 +55,6 @@ def login(conn):
             # Trigger Google login
             if not st.user.is_logged_in:
                 st.login()
-        # ---------------------------------------
-        # Microsoft login logic (optional)
-        # if microsoft_login:
-        #     st.info("⚡ Microsoft login is not implemented yet.")
 
     if st.user.is_logged_in:
         google_email = st.user.email

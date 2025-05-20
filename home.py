@@ -17,11 +17,11 @@ def home(conn):
     upload_job_description(conn)
 
     if st.session_state["resume_uploaded"] and st.session_state["jobdesc_uploaded"]:
-        st.success(" All files uploaded successfully!")
+        st.badge("All file uploaded successful", icon=":material/check:", color="green")
 
     # Logout
-    if st.button("Logout"):
-        st.session_state["logged_in"] = False
-        if st.user.is_logged_in:
-            st.logout()
-        st.rerun()
+    # if st.button("Logout"):
+    #     st.session_state["logged_in"] = False
+    #     if st.user.is_logged_in:
+    #         st.logout()
+    #     st.rerun()

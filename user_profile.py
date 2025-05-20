@@ -30,6 +30,12 @@ def show_user_profile(conn):
     st.markdown(f"- **Email**: {user['email']}")
     st.markdown(f"- **Joined**: {user['create_at'].strftime('%Y-%m-%d')}")
 
+    if st.button("Logout", type="primary"):
+        st.session_state["logged_in"] = False
+        if st.user.is_logged_in:
+            st.logout()
+            st.rerun()
+
     st.markdown("---")
 
     # Fetch 3 most recent match score results

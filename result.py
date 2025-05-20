@@ -21,7 +21,7 @@ def show_result(conn):
         st.subheader(" Resume vs Job Description Match")
 
         if "match_score_result" not in st.session_state:
-            if st.button("Analyze"):
+            if st.button("Analyze", type= "primary"):
                 with st.spinner("Analyzing your resume and job description..."):
                     result_obj = get_match_score(
                         conn,
@@ -76,7 +76,7 @@ def show_result(conn):
         st.subheader("Suggestions Skills")
 
         if "skills_suggestions" not in st.session_state:
-            if st.button("test"):
+            if st.button("Create Skill Suggestions", type= "primary"):
                 with st.spinner("Analyzing skills suggestions for your resume and job description..."):
                     result_obj = get_skill_suggestions(
                         conn,
@@ -113,18 +113,18 @@ def show_result(conn):
                         f"<div style='background-color:#e6ffee;padding:8px;border-radius:8px;margin-bottom:6px;color:black;'> {exp}</div>",
                         unsafe_allow_html=True)
 
-        with tab3:
-            st.subheader("🗣️ AI-Generated Interview Questions")
+    with tab3:
+        st.subheader(" AI-Generated Interview Questions")
 
         # Ensure match_id is available
-            if "match_id" not in st.session_state:
+        if "match_id" not in st.session_state:
                 st.warning("❗ Please analyze your resume first to generate interview questions.")
                 return
 
-            if "interview_questions" not in st.session_state:
-                if st.button("Generate Interview Questions"):
-                    with st.spinner("Generating interview questions..."):
-                        try:
+        if "interview_questions" not in st.session_state:
+            if st.button("Generate Interview Questions", type= "primary"):
+                 with st.spinner("Generating interview questions..."):
+                    try:
                             result_obj = generate_and_save_interview_questions(
                                 conn,
                                 st.session_state["resume_text"],
@@ -133,7 +133,7 @@ def show_result(conn):
                             )
                             st.session_state["interview_questions"] = result_obj
                             st.rerun()
-                        except Exception as e:
+                    except Exception as e:
                             st.error(f"❌ Failed to generate questions: {e}")
             else:
                 questions = st.session_state["interview_questions"]

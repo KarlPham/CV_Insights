@@ -65,6 +65,6 @@ def upload_resume(conn):
         # Save resume_text to session_state
         st.session_state["resume_text"] = resume_text
         st.session_state["resume_uploaded"] = True
-        st.success("✅ Resume uploaded and saved!")
+        st.badge("Success", icon=":material/check:", color="green")
 
 
