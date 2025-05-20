@@ -135,19 +135,19 @@ def show_result(conn):
                             st.rerun()
                     except Exception as e:
                             st.error(f"❌ Failed to generate questions: {e}")
+        else:
+            questions = st.session_state["interview_questions"]
+
+            if questions.tech_questions:
+                st.subheader("💻 Technical Questions")
+                for q in questions.tech_questions:
+                    st.markdown(f"- {q}")
             else:
-                questions = st.session_state["interview_questions"]
+                st.info("No technical questions generated.")
 
-                if questions.tech_questions:
-                    st.subheader("💻 Technical Questions")
-                    for q in questions.tech_questions:
-                        st.markdown(f"- {q}")
-                else:
-                    st.info("No technical questions generated.")
-
-                if questions.behav_questions:
-                    st.subheader("🧠 Behavioral Questions")
-                    for q in questions.behav_questions:
-                        st.markdown(f"- {q}")
-                else:
-                    st.info("No behavioral questions generated.")
+            if questions.behav_questions:
+                st.subheader("🧠 Behavioral Questions")
+                for q in questions.behav_questions:
+                    st.markdown(f"- {q}")
+            else:
+                st.info("No behavioral questions generated.")
