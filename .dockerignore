@@ -1,0 +1,10 @@
+# Python cache & virtualenv
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.mypy_cache/
+.mvenv/
+.myenv/
+.env/
+uploaded_files/
