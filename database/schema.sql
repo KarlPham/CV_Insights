@@ -12,7 +12,7 @@ CREATE TABLE users (
 CREATE TABLE resume (
     resume_id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
-    file_path VARCHAR(225),
+    file_path VARCHAR(50),
     upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -20,7 +20,7 @@ CREATE TABLE resume (
 CREATE TABLE job_description (
     job_desc_id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
-    file_path VARCHAR(225),
+    file_path VARCHAR(50),
     description_text TEXT,
     upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
