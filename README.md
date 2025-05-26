@@ -28,7 +28,33 @@ git checkout Docker
 
 ## 🗂️ Project Structure
 
-⬜ ![](/Users/imouli/Documents/Screenshot 2025-05-26 at 12.11.50 PM.png)
+```bash
+cv-insights/
+├── .dockerignore
+├── .env
+├── .gitignore
+├── Dockerfile
+├── README.md
+├── app.py
+├── docker-compose.yml
+├── home.py
+├── match_score.py
+├── question_generator.py
+├── requirements.txt
+├── result.py
+├── skills_suggestion.py
+├── upload_jobdes.py
+├── upload_resume.py
+├── user_profile.py
+├── database/
+│   └── schema.sql
+├── uploaded_files/
+│   ├── jobdesc/
+│   └── resume/
+├── auth/
+└── .streamlit/
+    └── secrets.toml
+```
 
 Key files:
 - `Dockerfile` – builds the app container
@@ -59,8 +85,12 @@ username = "postgres"
 password = "your password"
 
 [oauth]
-client_id = "your_google_oauth_client_id"
+redirect_uri = "http://localhost:8501/oauth2callback"
+cookie_secret = "your_google_oauth_cookie_secret"
+client_id =  "your_google_oauth_client_id"
 client_secret = "your_google_oauth_client_secret"
+server_metadata_url = "https://accounts.google.com/.well-known/openid-configuration"
+
 ```
 
 > 📌 Streamlit automatically reads this file inside Docker. You do **not** need to pass these as environment variables.
@@ -124,7 +154,7 @@ docker-compose down -v
 ## 📝 OAuth & Gemini Notes
 
 - Each user who clones this repo must:
-  - Create their own **Google Gemini API key**
+  - Create their own **Google Gemini API key** via [Google Ai Studio](https://aistudio.google.com/apikey)
   - Register their own **OAuth credentials** via [Google Cloud Console](https://console.cloud.google.com/)
   - Fill out their own `secrets.toml`
 
